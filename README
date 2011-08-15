@@ -1,0 +1,1 @@
+bokbot is a Python module intended to make it easy to write IRC bots. The IRC protocol is completely abstracted away and a good deal of the basic functionality you would want has been implemented in easy-to-use methods, allowing you to get right to the fun part: writing your bot! More documentation coming soon.
