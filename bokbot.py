@@ -53,9 +53,9 @@ class bokbot:
 		self.irc.send("QUIT")
 		self.irc.close()
 
-	def receive(self,block=True):
+	def receive(self,block=True,timeout=0):
 		if(block): return self.irc.recv(4096)
-		if len(select.select([self.irc], [], [],0)[0]): return self.irc.recv(4096)
+		if len(select.select([self.irc], [], [],timeout)[0]): return self.irc.recv(4096)
 		return None
 
 	def find(self, data, str):
@@ -73,8 +73,8 @@ class bokbot:
 	def me(self, msg):
 		self.ctcp("ACTION " + msg)
 
-	def main(self,block=True):
-		data = self.receive(block)
+	def main(self,block=True,timeout=0):
+		data = self.receive(block,timeout)
 		if(not data): return None
 		print data.strip()
 		if data.find('PING') != -1:
