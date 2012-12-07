@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 
+import select
 import socket
 import re
 
@@ -52,8 +53,10 @@ class bokbot:
 		self.irc.send("QUIT")
 		self.irc.close()
 
-	def receive(self):
-		return self.irc.recv(4096)
+	def receive(self,block=True):
+		if(block): return self.irc.recv(4096)
+		if len(select.select([self.irc], [], [],0)[0]): return self.irc.recv(4096)
+		return None
 
 	def find(self, data, str):
 		return data.lower().find(str)
@@ -70,8 +73,9 @@ class bokbot:
 	def me(self, msg):
 		self.ctcp("ACTION " + msg)
 
-	def main(self):
-		data = self.receive()
+	def main(self,block=True):
+		data = self.receive(block)
+		if(not data): return None
 		print data.strip()
 		if data.find('PING') != -1:
 			tmp = re.search("PING :(\w{8})", data)
