@@ -1,9 +1,10 @@
 #!/usr/bin/env python2
 
 import socket
+import re
 
 #this is the main class for bokbot, on which you can build other bots
-#check templatebot.py for an example of how it might be implemented
+#check teimport remplatebot.py for an example of how it might be implemented
 
 #there's no real documentation yet but there will be soon
 
@@ -29,13 +30,17 @@ class bokbot:
 		self.channel = channel
 		self.send("JOIN", self.channel)
 
+	def part(self, msg):
+		self.channel = ""
+		self.send("PART", "%s :%s" % (self.channel, msg))
+
 	def send(self, cmd, content=None):
 		if content is None:
 			message = "%s\r\n" % (cmd)
 		else:
 			message = "%s %s\r\n" % (cmd, content)
 		self.irc.send(message)
-		print message
+		print message.strip()
 
 	def say (self, msg, destination="NULL"):
 		if destination == "NULL":
@@ -67,7 +72,13 @@ class bokbot:
 
 	def main(self):
 		data = self.receive()
-		print data
+		print data.strip()
 		if data.find('PING') != -1:
-			self.send("PONG", data.split()[1])
+			tmp = re.search("PING :(\w{8})", data)
+			if tmp is not None:	
+				number = " :%s" % tmp.groups()[0].split()[0]
+				self.send("PONG%s" % number, "")
+			else:
+				self.send("PONG", data.split()[1])
+				
 		return data
